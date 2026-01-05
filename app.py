@@ -21,9 +21,29 @@ app.add_middleware(
 )
 
 # Load the Excel file
+excel_path = None
+# Try multiple paths
+possible_paths = [
+    '/mnt/user-data/uploads/Accessories.xlsx',
+    'Accessories.xlsx',
+    './Accessories.xlsx',
+    os.path.join(os.getcwd(), 'Accessories.xlsx'),
+]
+
 try:
-    df = pd.read_excel('/mnt/user-data/uploads/Accessories.xlsx', sheet_name='Sheet1')
-    print("✅ Excel file loaded successfully!")
+    for path in possible_paths:
+        if os.path.exists(path):
+            excel_path = path
+            break
+    
+    if excel_path:
+        df = pd.read_excel(excel_path, sheet_name='Sheet1')
+        print(f"✅ Excel file loaded successfully from: {excel_path}")
+    else:
+        print(f"❌ Excel file not found in any of these locations:")
+        for path in possible_paths:
+            print(f"   - {path}")
+        df = pd.DataFrame()
 except Exception as e:
     print(f"❌ Error loading Excel file: {e}")
     df = pd.DataFrame()
