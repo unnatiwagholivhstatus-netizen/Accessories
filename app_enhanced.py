@@ -38,14 +38,14 @@ try:
     
     if excel_path:
         df = pd.read_excel(excel_path, sheet_name='Sheet1')
-        print(f"✅ Excel file loaded successfully from: {excel_path}")
+        print(f"Excel file loaded successfully from: {excel_path}")
     else:
-        print(f"❌ Excel file not found in any of these locations:")
+        print(f"Excel file not found in any of these locations:")
         for path in possible_paths:
             print(f"   - {path}")
         df = pd.DataFrame()
 except Exception as e:
-    print(f"❌ Error loading Excel file: {e}")
+    print(f"Error loading Excel file: {e}")
     df = pd.DataFrame()
 
 # Clean column names
@@ -79,10 +79,10 @@ months = sorted([str(x) for x in df['Fiscal Month'].unique().tolist() if pd.notn
 locations = sorted([str(x) for x in df['Location'].unique().tolist() if pd.notna(x)])
 models = sorted([str(x) for x in df['Model Group'].unique().tolist() if pd.notna(x)])
 
-print(f"📊 Data loaded: {len(df)} rows")
-print(f"📅 Quarters: {quarters}")
-print(f"📍 Divisions: {locations}")
-print(f"🏷️  Models: {models}")
+print(f"Data loaded: {len(df)} rows")
+print(f"Quarters: {quarters}")
+print(f"Divisions: {locations}")
+print(f"Models: {models}")
 
 @app.get("/")
 def read_root():
@@ -140,6 +140,10 @@ def get_data(
             totals[col] = float(filtered_df[col].sum())
         else:
             totals[col] = 0.0
+    
+    # Ensure proper count values
+    totals['No of Billied Ros  '] = float(filtered_df['No of Billied Ros  '].sum()) if 'No of Billied Ros  ' in filtered_df.columns else 0.0
+    totals['No of Counter ROs  '] = float(filtered_df['No of Counter ROs  '].sum()) if 'No of Counter ROs  ' in filtered_df.columns else 0.0
     
     return {
         "data": records,
@@ -254,10 +258,10 @@ def health_check():
 if __name__ == "__main__":
     import uvicorn
     print("\n" + "="*60)
-    print("🚀 Starting Accessories Sales Dashboard")
+    print("Starting Accessories Sales Dashboard")
     print("="*60)
-    print("📱 Dashboard: http://localhost:8000")
-    print("📊 API Docs: http://localhost:8000/docs")
+    print("Dashboard: http://localhost:8000")
+    print("API Docs: http://localhost:8000/docs")
     print("="*60 + "\n")
     
     uvicorn.run(app, host="0.0.0.0", port=8000)
