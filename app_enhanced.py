@@ -22,7 +22,6 @@ app.add_middleware(
 
 # Load the Excel file
 excel_path = None
-# Try multiple paths
 possible_paths = [
     '/mnt/user-data/uploads/Accessories.xlsx',
     'Accessories.xlsx',
@@ -73,14 +72,22 @@ for col in numeric_cols:
     if col in df.columns:
         df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
 
+# Indian Financial Year Month Order
+indian_financial_months = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar']
+
 # Get unique values for dropdowns
 quarters = sorted([str(x) for x in df['Fiscal Quarter'].unique().tolist() if pd.notna(x)])
-months = sorted([str(x) for x in df['Fiscal Month'].unique().tolist() if pd.notna(x)])
+
+# Sort months in Indian financial year order
+all_months = [str(x) for x in df['Fiscal Month'].unique().tolist() if pd.notna(x)]
+months = sorted(all_months, key=lambda x: indian_financial_months.index(x) if x in indian_financial_months else 999)
+
 locations = sorted([str(x) for x in df['Location'].unique().tolist() if pd.notna(x)])
 models = sorted([str(x) for x in df['Model Group'].unique().tolist() if pd.notna(x)])
 
 print(f"Data loaded: {len(df)} rows")
 print(f"Quarters: {quarters}")
+print(f"Months (Indian Financial Order): {months}")
 print(f"Divisions: {locations}")
 print(f"Models: {models}")
 
@@ -141,9 +148,16 @@ def get_data(
         else:
             totals[col] = 0.0
     
-    # Ensure proper count values
-    totals['No of Billied Ros  '] = float(filtered_df['No of Billied Ros  '].sum()) if 'No of Billied Ros  ' in filtered_df.columns else 0.0
-    totals['No of Counter ROs  '] = float(filtered_df['No of Counter ROs  '].sum()) if 'No of Counter ROs  ' in filtered_df.columns else 0.0
+    # Ensure proper count values - these are the billied ros and counter ros counts
+    if 'No of Billied Ros  ' in filtered_df.columns:
+        totals['No of Billied Ros  '] = int(filtered_df['No of Billied Ros  '].sum())
+    else:
+        totals['No of Billied Ros  '] = 0
+        
+    if 'No of Counter ROs  ' in filtered_df.columns:
+        totals['No of Counter ROs  '] = int(filtered_df['No of Counter ROs  '].sum())
+    else:
+        totals['No of Counter ROs  '] = 0
     
     return {
         "data": records,
