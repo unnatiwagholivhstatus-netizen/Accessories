@@ -6,69 +6,165 @@
   <title>Accessories Sales Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      padding: 20px;
-      color: #333;
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body{
+      font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+      background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+      min-height:100vh;
+      padding:20px;
+      color:#333;
     }
-    .container { max-width: 1400px; margin: 0 auto; }
-    .header { text-align: center; color: white; margin-bottom: 30px; }
-    .header h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
-    .header p { font-size: 1.1em; opacity: 0.9; }
-    .dashboard-wrapper { background: white; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 30px; }
-    .filters-section { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); padding: 25px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-    .filters-title { font-size: 1.3em; color: #333; margin-bottom: 20px; font-weight: 600; }
-    .filters-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px; }
-    .filter-group { display: flex; flex-direction: column; }
-    .filter-group label { font-weight: 600; margin-bottom: 8px; color: #333; font-size: 0.95em; }
-    .filter-group select { padding: 12px 15px; border: 2px solid #667eea; border-radius: 8px; font-size: 0.95em; background: white; cursor: pointer; transition: all 0.3s ease; }
-    .button-group { display: flex; gap: 12px; flex-wrap: wrap; }
-    .btn { padding: 12px 25px; border: none; border-radius: 8px; font-size: 0.95em; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 0.5px; }
-    .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; flex: 1; min-width: 150px; }
-    .btn-secondary { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; flex: 1; min-width: 150px; }
-    .btn-reset { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; flex: 1; min-width: 150px; }
+    .container{ max-width:1400px; margin:0 auto; }
+    .header{ text-align:center; color:#fff; margin-bottom:30px; }
+    .header h1{ font-size:2.5em; margin-bottom:10px; text-shadow:2px 2px 4px rgba(0,0,0,.3); }
+    .header p{ font-size:1.1em; opacity:.9; }
 
-    .stats-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
-    .stat-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-    .stat-card h3 { font-size: 0.85em; opacity: 0.9; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
-    .stat-card .value { font-size: 1.6em; font-weight: bold; }
+    .dashboard-wrapper{ background:#fff; border-radius:15px; box-shadow:0 10px 40px rgba(0,0,0,.2); padding:30px; }
 
-    .table-wrapper { overflow-x: auto; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-    table { width: 100%; border-collapse: collapse; background: white; }
-    thead { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-    th { padding: 15px; text-align: left; font-weight: 600; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px; }
-    td { padding: 12px 15px; border-bottom: 1px solid #e0e0e0; }
-    tbody tr:hover { background-color: #f5f5f5; }
-    .totals-row { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); font-weight: 600; }
+    .filters-section{
+      background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);
+      padding:25px;
+      border-radius:12px;
+      margin-bottom:30px;
+      box-shadow:0 4px 15px rgba(0,0,0,.1);
+    }
+    .filters-title{ font-size:1.3em; color:#333; margin-bottom:20px; font-weight:600; }
 
-    .loading { display: none; text-align: center; padding: 20px; }
-    .loading.show { display: block; }
-    .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
-    @keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+    .filters-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:20px;
+      margin-bottom:20px;
+    }
+    .filter-group{ display:flex; flex-direction:column; }
+    .filter-group label{ font-weight:600; margin-bottom:8px; color:#333; font-size:.95em; }
+    .filter-group select{
+      padding:12px 15px;
+      border:2px solid #667eea;
+      border-radius:8px;
+      font-size:.95em;
+      background:#fff;
+      cursor:pointer;
+    }
 
-    .error, .success { padding: 15px; border-radius: 8px; margin-bottom: 20px; display: none; }
-    .error.show { display: block; background:#ffebee; color:#c62828; border-left:4px solid #c62828; }
-    .success.show { display: block; background:#e8f5e9; color:#2e7d32; border-left:4px solid #2e7d32; }
+    .button-group{ display:flex; gap:12px; flex-wrap:wrap; }
+    .btn{
+      padding:12px 25px;
+      border:none;
+      border-radius:8px;
+      font-size:.95em;
+      font-weight:600;
+      cursor:pointer;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+      flex:1;
+      min-width:150px;
+      transition:transform .2s ease;
+    }
+    .btn:hover{ transform:translateY(-1px); }
+    .btn-primary{ background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:#fff; }
+    .btn-secondary{ background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%); color:#fff; }
+    .btn-reset{ background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%); color:#fff; }
 
-    .charts-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-bottom: 30px; }
-    .chart-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-    .chart-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; }
-    .chart-filters { display: flex; gap: 15px; flex-wrap: wrap; }
-    .chart-filters select { padding: 8px 12px; border: 2px solid #667eea; border-radius: 6px; font-size: 0.9em; background: white; cursor: pointer; }
-    .chart-series-selector { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
-    .chart-series-selector label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600; font-size: 0.95em; color: #333; }
-    .chart-series-selector input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: #667eea; }
+    .error,.success{ padding:15px; border-radius:8px; margin-bottom:20px; display:none; }
+    .error.show{ display:block; background:#ffebee; color:#c62828; border-left:4px solid #c62828; }
+    .success.show{ display:block; background:#e8f5e9; color:#2e7d32; border-left:4px solid #2e7d32; }
 
-    @media (max-width: 768px) {
-      body { padding: 12px; }
-      .header h1 { font-size: 1.8em; }
-      .filters-grid { grid-template-columns: 1fr; }
-      .button-group { flex-direction: column; }
-      .stats-section { grid-template-columns: 1fr; }
-      .charts-section { grid-template-columns: 1fr; }
+    .loading{ display:none; text-align:center; padding:20px; }
+    .loading.show{ display:block; }
+    .spinner{
+      border:4px solid #f3f3f3;
+      border-top:4px solid #667eea;
+      border-radius:50%;
+      width:40px;
+      height:40px;
+      animation:spin 1s linear infinite;
+      margin:0 auto 10px;
+    }
+    @keyframes spin{ 0%{transform:rotate(0)} 100%{transform:rotate(360deg)} }
+
+    .stats-section{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+      gap:15px;
+      margin-bottom:30px;
+    }
+    .stat-card{
+      background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+      color:#fff;
+      padding:20px;
+      border-radius:10px;
+      text-align:center;
+      box-shadow:0 4px 15px rgba(0,0,0,.1);
+    }
+    .stat-card h3{
+      font-size:.85em;
+      opacity:.9;
+      margin-bottom:10px;
+      text-transform:uppercase;
+      letter-spacing:1px;
+    }
+    .stat-card .value{ font-size:1.6em; font-weight:700; }
+
+    .charts-section{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(400px,1fr));
+      gap:30px;
+      margin-bottom:30px;
+    }
+    .chart-container{
+      background:#fff;
+      padding:20px;
+      border-radius:10px;
+      box-shadow:0 4px 15px rgba(0,0,0,.1);
+    }
+    .chart-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:15px;
+      margin-bottom:20px;
+    }
+    .chart-filters{ display:flex; gap:12px; flex-wrap:wrap; }
+    .chart-filters select{
+      padding:8px 12px;
+      border:2px solid #667eea;
+      border-radius:6px;
+      background:#fff;
+      cursor:pointer;
+    }
+    .chart-series-selector{
+      display:flex;
+      gap:20px;
+      margin-bottom:15px;
+      flex-wrap:wrap;
+    }
+    .chart-series-selector label{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:.95em;
+    }
+    .chart-series-selector input{ width:18px; height:18px; accent-color:#667eea; }
+
+    .table-wrapper{ overflow-x:auto; border-radius:10px; box-shadow:0 4px 15px rgba(0,0,0,.1); }
+    table{ width:100%; border-collapse:collapse; background:#fff; }
+    thead{ background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:#fff; }
+    th{ padding:15px; text-align:left; font-weight:600; font-size:.9em; text-transform:uppercase; letter-spacing:.5px; }
+    td{ padding:12px 15px; border-bottom:1px solid #e0e0e0; }
+    tbody tr:hover{ background:#f5f5f5; }
+    .totals-row{ background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%); font-weight:700; }
+
+    @media(max-width:768px){
+      body{ padding:12px; }
+      .header h1{ font-size:1.8em; }
+      .filters-grid{ grid-template-columns:1fr; }
+      .button-group{ flex-direction:column; }
+      .stats-section{ grid-template-columns:1fr; }
+      .charts-section{ grid-template-columns:1fr; }
     }
   </style>
 </head>
@@ -88,17 +184,14 @@
           <label for="quarter">Fiscal Quarter</label>
           <select id="quarter"><option value="">All Quarters</option></select>
         </div>
-
         <div class="filter-group">
           <label for="month">Fiscal Month</label>
           <select id="month"><option value="">All Months</option></select>
         </div>
-
         <div class="filter-group">
           <label for="location">Division/Location</label>
           <select id="location"><option value="">All Divisions</option></select>
         </div>
-
         <div class="filter-group">
           <label for="model">Model Group</label>
           <select id="model"><option value="">All Models</option></select>
@@ -117,7 +210,7 @@
 
     <div class="loading" id="loading">
       <div class="spinner"></div>
-      <p>Loading data...</p>
+      <div>Loading data...</div>
     </div>
 
     <div class="stats-section" id="stats"></div>
@@ -127,11 +220,11 @@
         <div class="chart-header">
           <h3>Sales Trend Analysis</h3>
           <div class="chart-filters">
-            <select id="chartType" onchange="updateChart()">
+            <select id="chartType">
               <option value="month">Month Wise</option>
               <option value="quarter">Quarter Wise</option>
             </select>
-            <select id="priceModel" onchange="updateChart()">
+            <select id="priceModel">
               <option value="gndp">GNDP</option>
               <option value="mrp">MRP</option>
             </select>
@@ -139,9 +232,9 @@
         </div>
 
         <div class="chart-series-selector">
-          <label><input type="checkbox" id="showROs" checked onchange="updateChart()">ROs Sale</label>
-          <label><input type="checkbox" id="showCounter" checked onchange="updateChart()">Counter Sale</label>
-          <label><input type="checkbox" id="showTotal" checked onchange="updateChart()">Total Sale</label>
+          <label><input type="checkbox" id="showROs" checked>ROs Sale</label>
+          <label><input type="checkbox" id="showCounter" checked>Counter Sale</label>
+          <label><input type="checkbox" id="showTotal" checked>Total Sale</label>
         </div>
 
         <canvas id="salesChart"></canvas>
@@ -149,9 +242,9 @@
     </div>
 
     <div class="data-section">
-      <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-        <span style="font-size:1.3em;font-weight:600;">Sales Data</span>
-        <span id="recordCount" style="color:#666;font-size:0.9em;"></span>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <div style="font-size:1.3em;font-weight:600;">Sales Data</div>
+        <div id="recordCount" style="color:#666;font-size:.9em;"></div>
       </div>
 
       <div class="table-wrapper">
@@ -180,18 +273,33 @@
 </div>
 
 <script>
-  const API_BASE = '';
   let allData = [];
   let chartInstance = null;
+  let isLoadingData = false;
 
-  document.addEventListener('DOMContentLoaded', () => {
-    loadFilterOptions();
-    applyFilters();
+  const qEl = document.getElementById('quarter');
+  const mEl = document.getElementById('month');
+  const lEl = document.getElementById('location');
+  const mdEl = document.getElementById('model');
+
+  const chartTypeEl = document.getElementById('chartType');
+  const priceModelEl = document.getElementById('priceModel');
+
+  // Chart controls (only update chart, not API call)
+  chartTypeEl.addEventListener('change', updateChart);
+  priceModelEl.addEventListener('change', updateChart);
+  document.getElementById('showROs').addEventListener('change', updateChart);
+  document.getElementById('showCounter').addEventListener('change', updateChart);
+  document.getElementById('showTotal').addEventListener('change', updateChart);
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    await loadFilterOptions();
+    await applyFilters();
   });
 
   async function loadFilterOptions() {
     try {
-      const res = await fetch(API_BASE + '/api/filter-options');
+      const res = await fetch('/api/filter-options');
       const opt = await res.json();
       populateSelect('quarter', opt.quarters);
       populateSelect('month', opt.months);
@@ -213,18 +321,21 @@
   }
 
   async function applyFilters() {
+    if (isLoadingData) return;
+    isLoadingData = true;
+
     showLoading(true);
     hideMessages();
 
     const payload = {
-      quarter: document.getElementById('quarter').value,
-      month: document.getElementById('month').value,
-      location: document.getElementById('location').value,
-      model: document.getElementById('model').value
+      quarter: qEl.value,
+      month: mEl.value,
+      location: lEl.value,
+      model: mdEl.value
     };
 
     try {
-      const res = await fetch(API_BASE + '/api/get-data', {
+      const res = await fetch('/api/get-data', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
         body: JSON.stringify(payload)
@@ -233,10 +344,11 @@
       if (!res.ok) throw new Error('Failed to fetch data');
 
       const result = await res.json();
-      allData = result.data || [];
 
+      allData = result.data || [];
       displayData(result.data, result.totals, result.count);
       displayStats(result.totals);
+
       updateChart();
 
       showSuccess('Data loaded successfully');
@@ -244,7 +356,37 @@
       showError('Error loading data: ' + e.message);
     } finally {
       showLoading(false);
+      isLoadingData = false;
     }
+  }
+
+  function resetFilters() {
+    qEl.value = '';
+    mEl.value = '';
+    lEl.value = '';
+    mdEl.value = '';
+    applyFilters();
+  }
+
+  function displayStats(totals) {
+    const box = document.getElementById('stats');
+    box.innerHTML = '';
+
+    const items = [
+      {label:'Total Billied ROs', value: formatNumber(totals['No of Billied Ros'], 0)},
+      {label:'Total ROs Sale GNDP', value: 'Rs ' + formatNumber(totals['Acc Sale throughROs (GNDP)In Rs'], 0)},
+      {label:'Total ROs Sale MRP', value: 'Rs ' + formatNumber(totals['Acc Sale throughROs (MRP) In Rs'], 0)},
+      {label:'Total Counter ROs', value: formatNumber(totals['No of Counter ROs'], 0)},
+      {label:'Counter Sale GNDP', value: 'Rs ' + formatNumber(totals['Acc Sale throughCounter (GNDP) In Rs'], 0)},
+      {label:'Counter Sale MRP', value: 'Rs ' + formatNumber(totals['Acc Sale throughCounter (MRP) In Rs'], 0)},
+    ];
+
+    items.forEach(s => {
+      const d = document.createElement('div');
+      d.className = 'stat-card';
+      d.innerHTML = `<h3>${s.label}</h3><div class="value">${s.value}</div>`;
+      box.appendChild(d);
+    });
   }
 
   function displayData(data, totals, count) {
@@ -260,14 +402,14 @@
     data.forEach(row => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${row['Fiscal Quarter'] ?? ''}</td>
-        <td>${row['Fiscal Month'] ?? ''}</td>
-        <td>${row['Location'] ?? ''}</td>
-        <td>${row['Model Group'] ?? ''}</td>
-        <td>${formatNumber(row['No of Billied Ros'])}</td>
+        <td>${safe(row['Fiscal Quarter'])}</td>
+        <td>${safe(row['Fiscal Month'])}</td>
+        <td>${safe(row['Location'])}</td>
+        <td>${safe(row['Model Group'])}</td>
+        <td>${formatNumber(row['No of Billied Ros'], 0)}</td>
         <td>Rs ${formatNumber(row['Acc Sale throughROs (GNDP)In Rs'], 0)}</td>
         <td>Rs ${formatNumber(row['Acc Sale throughROs (MRP) In Rs'], 0)}</td>
-        <td>${formatNumber(row['No of Counter ROs'])}</td>
+        <td>${formatNumber(row['No of Counter ROs'], 0)}</td>
         <td>Rs ${formatNumber(row['Acc Sale throughCounter (GNDP) In Rs'], 0)}</td>
         <td>Rs ${formatNumber(row['Acc Sale throughCounter (MRP) In Rs'], 0)}</td>
         <td>Rs ${formatNumber(row['Acc Revenue (GNDP) / RO'], 0)}</td>
@@ -280,10 +422,10 @@
     totalTr.className = 'totals-row';
     totalTr.innerHTML = `
       <td colspan="4">TOTAL</td>
-      <td>${formatNumber(totals['No of Billied Ros'])}</td>
+      <td>${formatNumber(totals['No of Billied Ros'], 0)}</td>
       <td>Rs ${formatNumber(totals['Acc Sale throughROs (GNDP)In Rs'], 0)}</td>
       <td>Rs ${formatNumber(totals['Acc Sale throughROs (MRP) In Rs'], 0)}</td>
-      <td>${formatNumber(totals['No of Counter ROs'])}</td>
+      <td>${formatNumber(totals['No of Counter ROs'], 0)}</td>
       <td>Rs ${formatNumber(totals['Acc Sale throughCounter (GNDP) In Rs'], 0)}</td>
       <td>Rs ${formatNumber(totals['Acc Sale throughCounter (MRP) In Rs'], 0)}</td>
       <td>Rs ${formatNumber(totals['Acc Revenue (GNDP) / RO'], 0)}</td>
@@ -294,37 +436,106 @@
     document.getElementById('recordCount').textContent = `Showing ${count} records`;
   }
 
-  function displayStats(totals) {
-    const box = document.getElementById('stats');
-    box.innerHTML = '';
+  function updateChart() {
+    const chartType = chartTypeEl.value;
+    const priceModel = priceModelEl.value;
 
-    const items = [
-      {label:'Total Billied ROs', value: formatNumber(totals['No of Billied Ros'])},
-      {label:'Total ROs Sale GNDP', value: 'Rs ' + formatNumber(totals['Acc Sale throughROs (GNDP)In Rs'], 0)},
-      {label:'Total ROs Sale MRP', value: 'Rs ' + formatNumber(totals['Acc Sale throughROs (MRP) In Rs'], 0)},
-      {label:'Total Counter ROs', value: formatNumber(totals['No of Counter ROs'])},
-      {label:'Counter Sale GNDP', value: 'Rs ' + formatNumber(totals['Acc Sale throughCounter (GNDP) In Rs'], 0)},
-      {label:'Counter Sale MRP', value: 'Rs ' + formatNumber(totals['Acc Sale throughCounter (MRP) In Rs'], 0)},
-    ];
+    if (chartType === 'month') createMonthWiseChart(priceModel);
+    else createQuarterWiseChart(priceModel);
+  }
 
-    items.forEach(s => {
-      const d = document.createElement('div');
-      d.className = 'stat-card';
-      d.innerHTML = `<h3>${s.label}</h3><div class="value">${s.value}</div>`;
-      box.appendChild(d);
+  function createMonthWiseChart(priceModel) {
+    const order = ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+    const monthly = {};
+
+    for (const r of allData) {
+      const m = r['Fiscal Month'];
+      if (!monthly[m]) monthly[m] = {ros_gndp:0, ros_mrp:0, counter_gndp:0, counter_mrp:0};
+      monthly[m].ros_gndp += +r['Acc Sale throughROs (GNDP)In Rs'] || 0;
+      monthly[m].ros_mrp += +r['Acc Sale throughROs (MRP) In Rs'] || 0;
+      monthly[m].counter_gndp += +r['Acc Sale throughCounter (GNDP) In Rs'] || 0;
+      monthly[m].counter_mrp += +r['Acc Sale throughCounter (MRP) In Rs'] || 0;
+    }
+
+    let labels = order.filter(m => monthly[m]);
+    let ros = labels.map(m => priceModel==='gndp' ? monthly[m].ros_gndp : monthly[m].ros_mrp);
+    let counter = labels.map(m => priceModel==='gndp' ? monthly[m].counter_gndp : monthly[m].counter_mrp);
+    let total = labels.map((_,i) => ros[i] + counter[i]);
+
+    drawChart(labels, ros, counter, total, `Month Wise Sales Trend ${priceModel.toUpperCase()}`);
+  }
+
+  function createQuarterWiseChart(priceModel) {
+    const qorder = ['Q1','Q2','Q3','Q4'];
+    const qdata = {};
+
+    for (const r of allData) {
+      const q = r['Fiscal Quarter'];
+      if (!qdata[q]) qdata[q] = {ros_gndp:0, ros_mrp:0, counter_gndp:0, counter_mrp:0};
+      qdata[q].ros_gndp += +r['Acc Sale throughROs (GNDP)In Rs'] || 0;
+      qdata[q].ros_mrp += +r['Acc Sale throughROs (MRP) In Rs'] || 0;
+      qdata[q].counter_gndp += +r['Acc Sale throughCounter (GNDP) In Rs'] || 0;
+      qdata[q].counter_mrp += +r['Acc Sale throughCounter (MRP) In Rs'] || 0;
+    }
+
+    let labels = qorder.filter(q => qdata[q]);
+    let ros = labels.map(q => priceModel==='gndp' ? qdata[q].ros_gndp : qdata[q].ros_mrp);
+    let counter = labels.map(q => priceModel==='gndp' ? qdata[q].counter_gndp : qdata[q].counter_mrp);
+    let total = labels.map((_,i) => ros[i] + counter[i]);
+
+    drawChart(labels, ros, counter, total, `Quarter Wise Sales Trend ${priceModel.toUpperCase()}`);
+  }
+
+  // ----------- CHART FIX: NO ENLARGE + NO HANG -----------
+  function drawChart(labels, ros, counter, total, title) {
+    const canvas = document.getElementById('salesChart');
+    const ctx = canvas.getContext('2d');
+
+    // lock size
+    canvas.height = 320;
+    canvas.width = canvas.parentElement.clientWidth;
+
+    if (chartInstance) {
+      chartInstance.destroy();
+      chartInstance = null;
+    }
+
+    const datasets = [];
+    if (document.getElementById('showROs').checked) datasets.push({label:'ROs Sale', data:ros, borderWidth:2, tension:0.3});
+    if (document.getElementById('showCounter').checked) datasets.push({label:'Counter Sale', data:counter, borderWidth:2, tension:0.3});
+    if (document.getElementById('showTotal').checked) datasets.push({label:'Total Sale', data:total, borderWidth:2, tension:0.3});
+
+    chartInstance = new Chart(ctx, {
+      type:'line',
+      data:{labels, datasets},
+      options:{
+        responsive:false,
+        animation:false,
+        maintainAspectRatio:false,
+        plugins:{
+          title:{display:true, text:title},
+          legend:{display:true}
+        },
+        scales:{
+          y:{
+            beginAtZero:true,
+            ticks:{ callback:(v)=> 'Rs ' + formatNumber(v,0) }
+          }
+        }
+      }
     });
   }
 
   async function exportToExcel() {
     try {
       const payload = {
-        quarter: document.getElementById('quarter').value,
-        month: document.getElementById('month').value,
-        location: document.getElementById('location').value,
-        model: document.getElementById('model').value
+        quarter: qEl.value,
+        month: mEl.value,
+        location: lEl.value,
+        model: mdEl.value
       };
 
-      const res = await fetch(API_BASE + '/api/export-excel', {
+      const res = await fetch('/api/export-excel', {
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body: JSON.stringify(payload)
@@ -348,101 +559,7 @@
     }
   }
 
-  function resetFilters() {
-    document.getElementById('quarter').value = '';
-    document.getElementById('month').value = '';
-    document.getElementById('location').value = '';
-    document.getElementById('model').value = '';
-    applyFilters();
-  }
-
-  function updateChart() {
-    const chartType = document.getElementById('chartType').value;
-    const priceModel = document.getElementById('priceModel').value;
-
-    if (chartType === 'month') createMonthWiseChart(priceModel);
-    else createQuarterWiseChart(priceModel);
-  }
-
-  function createMonthWiseChart(priceModel) {
-    const order = ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
-    const monthly = {};
-
-    allData.forEach(r => {
-      const m = r['Fiscal Month'];
-      if (!monthly[m]) monthly[m] = {ros_gndp:0, ros_mrp:0, counter_gndp:0, counter_mrp:0};
-      monthly[m].ros_gndp += +r['Acc Sale throughROs (GNDP)In Rs'] || 0;
-      monthly[m].ros_mrp += +r['Acc Sale throughROs (MRP) In Rs'] || 0;
-      monthly[m].counter_gndp += +r['Acc Sale throughCounter (GNDP) In Rs'] || 0;
-      monthly[m].counter_mrp += +r['Acc Sale throughCounter (MRP) In Rs'] || 0;
-    });
-
-    const labels = order.filter(m => monthly[m]);
-    const ros = labels.map(m => priceModel==='gndp' ? monthly[m].ros_gndp : monthly[m].ros_mrp);
-    const counter = labels.map(m => priceModel==='gndp' ? monthly[m].counter_gndp : monthly[m].counter_mrp);
-    const total = labels.map((_,i) => ros[i] + counter[i]);
-
-    drawChart(labels, ros, counter, total, `Month Wise Sales Trend ${priceModel.toUpperCase()}`);
-  }
-
-  function createQuarterWiseChart(priceModel) {
-    const qorder = ['Q1','Q2','Q3','Q4'];
-    const qdata = {};
-
-    allData.forEach(r => {
-      const q = r['Fiscal Quarter'];
-      if (!qdata[q]) qdata[q] = {ros_gndp:0, ros_mrp:0, counter_gndp:0, counter_mrp:0};
-      qdata[q].ros_gndp += +r['Acc Sale throughROs (GNDP)In Rs'] || 0;
-      qdata[q].ros_mrp += +r['Acc Sale throughROs (MRP) In Rs'] || 0;
-      qdata[q].counter_gndp += +r['Acc Sale throughCounter (GNDP) In Rs'] || 0;
-      qdata[q].counter_mrp += +r['Acc Sale throughCounter (MRP) In Rs'] || 0;
-    });
-
-    const labels = qorder.filter(q => qdata[q]);
-    const ros = labels.map(q => priceModel==='gndp' ? qdata[q].ros_gndp : qdata[q].ros_mrp);
-    const counter = labels.map(q => priceModel==='gndp' ? qdata[q].counter_gndp : qdata[q].counter_mrp);
-    const total = labels.map((_,i) => ros[i] + counter[i]);
-
-    drawChart(labels, ros, counter, total, `Quarter Wise Sales Trend ${priceModel.toUpperCase()}`);
-  }
-
-  function drawChart(labels, ros, counter, total, title) {
-    const ctx = document.getElementById('salesChart').getContext('2d');
-    if (chartInstance) chartInstance.destroy();
-
-    const showROs = document.getElementById('showROs').checked;
-    const showCounter = document.getElementById('showCounter').checked;
-    const showTotal = document.getElementById('showTotal').checked;
-
-    const datasets = [];
-    if (showROs) datasets.push({label:'ROs Sale', data:ros, borderWidth:3, tension:0.35, fill:false});
-    if (showCounter) datasets.push({label:'Counter Sale', data:counter, borderWidth:3, tension:0.35, fill:false});
-    if (showTotal) datasets.push({label:'Total Sale', data:total, borderWidth:3, tension:0.35, fill:false});
-
-    chartInstance = new Chart(ctx, {
-      type:'line',
-      data:{labels, datasets},
-      options:{
-        responsive:true,
-        maintainAspectRatio:false,
-        plugins:{
-          title:{display:true, text:title},
-          legend:{display:true}
-        },
-        scales:{
-          y:{
-            beginAtZero:true,
-            ticks:{
-              callback:(v)=> 'Rs ' + formatNumber(v,0)
-            }
-          }
-        }
-      }
-    });
-
-    // set canvas height for mobile
-    document.getElementById('salesChart').style.height = '320px';
-  }
+  function safe(v){ return (v===undefined || v===null) ? '' : v; }
 
   function formatNumber(num, decimals=0) {
     const n = Number(num);
@@ -450,25 +567,10 @@
     return n.toLocaleString('en-IN', {minimumFractionDigits:decimals, maximumFractionDigits:decimals});
   }
 
-  function showLoading(show) {
-    const d = document.getElementById('loading');
-    d.classList.toggle('show', !!show);
-  }
-  function showError(msg) {
-    const d = document.getElementById('error');
-    d.textContent = msg;
-    d.classList.add('show');
-  }
-  function showSuccess(msg) {
-    const d = document.getElementById('success');
-    d.textContent = msg;
-    d.classList.add('show');
-    setTimeout(()=>d.classList.remove('show'), 3000);
-  }
-  function hideMessages() {
-    document.getElementById('error').classList.remove('show');
-    document.getElementById('success').classList.remove('show');
-  }
+  function showLoading(show){ document.getElementById('loading').classList.toggle('show', !!show); }
+  function showError(msg){ const d=document.getElementById('error'); d.textContent=msg; d.classList.add('show'); }
+  function showSuccess(msg){ const d=document.getElementById('success'); d.textContent=msg; d.classList.add('show'); setTimeout(()=>d.classList.remove('show'), 2500); }
+  function hideMessages(){ document.getElementById('error').classList.remove('show'); document.getElementById('success').classList.remove('show'); }
 </script>
 </body>
 </html>
