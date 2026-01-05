@@ -7,4 +7,5 @@ services:
     startCommand: gunicorn -w 1 -b 0.0.0.0:8000 -k uvicorn.workers.UvicornWorker app_enhanced:app
     envVars:
       - key: PYTHON_VERSION
-        value: 3.13.4
+        value: 3.12.10
+
