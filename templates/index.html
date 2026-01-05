@@ -448,14 +448,13 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📊 Accessories Sales Dashboard</h1>
-            <p>Real-time Sales Analytics & Reporting</p>
+            <h1>Accessories Sales Dashboard</h1>
+            <p>Real-time Sales Analytics and Reporting</p>
         </div>
 
         <div class="dashboard-wrapper">
-            <!-- Filters Section -->
             <div class="filters-section">
-                <div class="filters-title">🔍 Filter Data</div>
+                <div class="filters-title">Filter Data</div>
                 
                 <div class="filters-grid">
                     <div class="filter-group">
@@ -488,38 +487,34 @@
                 </div>
 
                 <div class="button-group">
-                    <button class="btn btn-primary" onclick="applyFilters()">🔎 Apply Filters</button>
-                    <button class="btn btn-secondary" onclick="exportToExcel()">📥 Export to Excel</button>
-                    <button class="btn btn-reset" onclick="resetFilters()">🔄 Reset Filters</button>
+                    <button class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
+                    <button class="btn btn-secondary" onclick="exportToExcel()">Export to Excel</button>
+                    <button class="btn btn-reset" onclick="resetFilters()">Reset Filters</button>
                 </div>
             </div>
 
-            <!-- Messages -->
             <div class="error" id="error"></div>
             <div class="success" id="success"></div>
 
-            <!-- Loading Indicator -->
             <div class="loading" id="loading">
                 <div class="spinner"></div>
                 <p>Loading data...</p>
             </div>
 
-            <!-- Stats Section -->
             <div class="stats-section" id="stats"></div>
 
-            <!-- Charts Section -->
             <div class="charts-section">
                 <div class="chart-container">
                     <div class="chart-header">
-                        <h3>📈 Sales Trend Analysis</h3>
+                        <h3>Sales Trend Analysis</h3>
                         <div class="chart-filters">
                             <select id="chartType" onchange="updateChart()">
-                                <option value="month">📅 Month Wise</option>
-                                <option value="quarter">🔄 Quarter Wise</option>
+                                <option value="month">Month Wise</option>
+                                <option value="quarter">Quarter Wise</option>
                             </select>
                             <select id="priceModel" onchange="updateChart()">
-                                <option value="gndp">💰 GNDP</option>
-                                <option value="mrp">💳 MRP</option>
+                                <option value="gndp">GNDP</option>
+                                <option value="mrp">MRP</option>
                             </select>
                         </div>
                     </div>
@@ -527,15 +522,15 @@
                     <div class="chart-series-selector">
                         <label>
                             <input type="checkbox" id="showROs" checked onchange="updateChart()">
-                            <span class="series-label">🟦 ROs Sale</span>
+                            <span class="series-label">ROs Sale</span>
                         </label>
                         <label>
                             <input type="checkbox" id="showCounter" checked onchange="updateChart()">
-                            <span class="series-label">🟪 Counter Sale</span>
+                            <span class="series-label">Counter Sale</span>
                         </label>
                         <label>
                             <input type="checkbox" id="showTotal" checked onchange="updateChart()">
-                            <span class="series-label">🟥 Total Sale</span>
+                            <span class="series-label">Total Sale</span>
                         </label>
                     </div>
                     
@@ -543,10 +538,9 @@
                 </div>
             </div>
 
-            <!-- Data Section -->
             <div class="data-section">
                 <div class="section-title">
-                    <span>📋 Sales Data</span>
+                    <span>Sales Data</span>
                     <span class="record-count" id="recordCount"></span>
                 </div>
 
@@ -559,13 +553,13 @@
                                 <th>Location</th>
                                 <th>Model Group</th>
                                 <th>Billied ROs</th>
-                                <th>ROs Sale (GNDP)</th>
-                                <th>ROs Sale (MRP)</th>
+                                <th>ROs Sale GNDP</th>
+                                <th>ROs Sale MRP</th>
                                 <th>Counter ROs</th>
-                                <th>Counter Sale (GNDP)</th>
-                                <th>Counter Sale (MRP)</th>
-                                <th>Revenue (GNDP)/RO</th>
-                                <th>Revenue (MRP)/RO</th>
+                                <th>Counter Sale GNDP</th>
+                                <th>Counter Sale MRP</th>
+                                <th>Revenue GNDP per RO</th>
+                                <th>Revenue MRP per RO</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody">
@@ -581,19 +575,16 @@
         let allData = [];
         let chartInstance = null;
 
-        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             loadFilterOptions();
             applyFilters();
         });
 
-        // Load filter options
         async function loadFilterOptions() {
             try {
-                const response = await fetch(`${API_BASE}/api/filter-options`);
+                const response = await fetch(API_BASE + '/api/filter-options');
                 const options = await response.json();
 
-                // Populate dropdowns
                 populateSelect('quarter', options.quarters);
                 populateSelect('month', options.months);
                 populateSelect('location', options.locations);
@@ -603,58 +594,58 @@
             }
         }
 
-        // Populate select element
         function populateSelect(elementId, options) {
             const select = document.getElementById(elementId);
-            const currentValue = select.value;
-
             options.forEach(option => {
                 const opt = document.createElement('option');
                 opt.value = option;
                 opt.textContent = option;
                 select.appendChild(opt);
             });
-
-            select.value = currentValue;
         }
 
-        // Apply filters
         async function applyFilters() {
             showLoading(true);
             hideMessages();
 
-            const filters = {
-                quarter: document.getElementById('quarter').value,
-                month: document.getElementById('month').value,
-                location: document.getElementById('location').value,
-                model: document.getElementById('model').value
-            };
+            const quarter = document.getElementById('quarter').value;
+            const month = document.getElementById('month').value;
+            const location = document.getElementById('location').value;
+            const model = document.getElementById('model').value;
 
             try {
-                const response = await fetch(`${API_BASE}/api/get-data`, {
+                const response = await fetch(API_BASE + '/api/get-data', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(filters)
+                    body: JSON.stringify({
+                        quarter: quarter,
+                        month: month,
+                        location: location,
+                        model: model
+                    })
                 });
 
-                if (!response.ok) throw new Error('Failed to fetch data');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
 
                 const result = await response.json();
                 allData = result.data;
 
                 displayData(result.data, result.totals, result.count);
                 displayStats(result.totals);
-                showSuccess('Data loaded successfully!');
+                updateChart();
+                showSuccess('Data loaded successfully');
             } catch (error) {
+                console.error('Error:', error);
                 showError('Error loading data: ' + error.message);
             } finally {
                 showLoading(false);
             }
         }
 
-        // Display data in table
         function displayData(data, totals, count) {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
@@ -665,7 +656,6 @@
                 return;
             }
 
-            // Add data rows
             data.forEach(row => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -674,51 +664,46 @@
                     <td>${row['Location']}</td>
                     <td>${row['Model Group']}</td>
                     <td>${formatNumber(row['No of Billied Ros  '])}</td>
-                    <td>₹ ${formatNumber(row['Acc Sale throughROs (GNDP)In Rs'], 2)}</td>
-                    <td>₹ ${formatNumber(row['Acc Sale throughROs (MRP) In Rs'], 2)}</td>
+                    <td>Rs ${formatNumber(row['Acc Sale throughROs (GNDP)In Rs'], 2)}</td>
+                    <td>Rs ${formatNumber(row['Acc Sale throughROs (MRP) In Rs'], 2)}</td>
                     <td>${formatNumber(row['No of Counter ROs  '])}</td>
-                    <td>₹ ${formatNumber(row['Acc Sale throughCounter (GNDP) In Rs'], 2)}</td>
-                    <td>₹ ${formatNumber(row['Acc Sale throughCounter (MRP) In Rs'], 2)}</td>
-                    <td>₹ ${formatNumber(row['Acc Revenue (GNDP) / RO  '], 2)}</td>
-                    <td>₹ ${formatNumber(row['Acc Revenue (MRP) / RO  '], 2)}</td>
+                    <td>Rs ${formatNumber(row['Acc Sale throughCounter (GNDP) In Rs'], 2)}</td>
+                    <td>Rs ${formatNumber(row['Acc Sale throughCounter (MRP) In Rs'], 2)}</td>
+                    <td>Rs ${formatNumber(row['Acc Revenue (GNDP) / RO  '], 2)}</td>
+                    <td>Rs ${formatNumber(row['Acc Revenue (MRP) / RO  '], 2)}</td>
                 `;
                 tbody.appendChild(tr);
             });
 
-            // Add totals row
             const totalsTr = document.createElement('tr');
             totalsTr.className = 'totals-row';
             totalsTr.innerHTML = `
                 <td colspan="4">TOTAL</td>
                 <td>${formatNumber(totals['No of Billied Ros  '])}</td>
-                <td>₹ ${formatNumber(totals['Acc Sale throughROs (GNDP)In Rs'], 2)}</td>
-                <td>₹ ${formatNumber(totals['Acc Sale throughROs (MRP) In Rs'], 2)}</td>
+                <td>Rs ${formatNumber(totals['Acc Sale throughROs (GNDP)In Rs'], 2)}</td>
+                <td>Rs ${formatNumber(totals['Acc Sale throughROs (MRP) In Rs'], 2)}</td>
                 <td>${formatNumber(totals['No of Counter ROs  '])}</td>
-                <td>₹ ${formatNumber(totals['Acc Sale throughCounter (GNDP) In Rs'], 2)}</td>
-                <td>₹ ${formatNumber(totals['Acc Sale throughCounter (MRP) In Rs'], 2)}</td>
-                <td>₹ ${formatNumber(totals['Acc Revenue (GNDP) / RO  '], 2)}</td>
-                <td>₹ ${formatNumber(totals['Acc Revenue (MRP) / RO  '], 2)}</td>
+                <td>Rs ${formatNumber(totals['Acc Sale throughCounter (GNDP) In Rs'], 2)}</td>
+                <td>Rs ${formatNumber(totals['Acc Sale throughCounter (MRP) In Rs'], 2)}</td>
+                <td>Rs ${formatNumber(totals['Acc Revenue (GNDP) / RO  '], 2)}</td>
+                <td>Rs ${formatNumber(totals['Acc Revenue (MRP) / RO  '], 2)}</td>
             `;
             tbody.appendChild(totalsTr);
 
             document.getElementById('recordCount').textContent = `Showing ${count} records`;
-            
-            // Update chart
-            updateChart();
         }
 
-        // Display statistics
         function displayStats(totals) {
             const statsContainer = document.getElementById('stats');
             statsContainer.innerHTML = '';
 
             const stats = [
                 { label: 'Total Billied ROs', value: formatNumber(totals['No of Billied Ros  ']) },
-                { label: 'Total ROs Sale (GNDP)', value: '₹ ' + formatNumber(totals['Acc Sale throughROs (GNDP)In Rs'], 0) },
-                { label: 'Total ROs Sale (MRP)', value: '₹ ' + formatNumber(totals['Acc Sale throughROs (MRP) In Rs'], 0) },
+                { label: 'Total ROs Sale GNDP', value: 'Rs ' + formatNumber(totals['Acc Sale throughROs (GNDP)In Rs'], 0) },
+                { label: 'Total ROs Sale MRP', value: 'Rs ' + formatNumber(totals['Acc Sale throughROs (MRP) In Rs'], 0) },
                 { label: 'Total Counter ROs', value: formatNumber(totals['No of Counter ROs  ']) },
-                { label: 'Counter Sale (GNDP)', value: '₹ ' + formatNumber(totals['Acc Sale throughCounter (GNDP) In Rs'], 0) },
-                { label: 'Counter Sale (MRP)', value: '₹ ' + formatNumber(totals['Acc Sale throughCounter (MRP) In Rs'], 0) },
+                { label: 'Counter Sale GNDP', value: 'Rs ' + formatNumber(totals['Acc Sale throughCounter (GNDP) In Rs'], 0) },
+                { label: 'Counter Sale MRP', value: 'Rs ' + formatNumber(totals['Acc Sale throughCounter (MRP) In Rs'], 0) },
             ];
 
             stats.forEach(stat => {
@@ -732,25 +717,29 @@
             });
         }
 
-        // Export to Excel
         async function exportToExcel() {
             try {
-                const filters = {
-                    quarter: document.getElementById('quarter').value,
-                    month: document.getElementById('month').value,
-                    location: document.getElementById('location').value,
-                    model: document.getElementById('model').value
-                };
+                const quarter = document.getElementById('quarter').value;
+                const month = document.getElementById('month').value;
+                const location = document.getElementById('location').value;
+                const model = document.getElementById('model').value;
 
-                const response = await fetch(`${API_BASE}/api/export-excel`, {
+                const response = await fetch(API_BASE + '/api/export-excel', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(filters)
+                    body: JSON.stringify({
+                        quarter: quarter,
+                        month: month,
+                        location: location,
+                        model: model
+                    })
                 });
 
-                if (!response.ok) throw new Error('Export failed');
+                if (!response.ok) {
+                    throw new Error('Export failed');
+                }
 
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
@@ -762,13 +751,12 @@
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(a);
 
-                showSuccess('File exported successfully!');
+                showSuccess('File exported successfully');
             } catch (error) {
                 showError('Export failed: ' + error.message);
             }
         }
 
-        // Reset filters
         function resetFilters() {
             document.getElementById('quarter').value = '';
             document.getElementById('month').value = '';
@@ -777,7 +765,6 @@
             applyFilters();
         }
 
-        // Update Chart
         function updateChart() {
             const chartType = document.getElementById('chartType').value;
             const priceModel = document.getElementById('priceModel').value;
@@ -789,10 +776,9 @@
             }
         }
 
-        // Create Month-wise Chart
         function createMonthWiseChart(priceModel) {
-            // Group data by month
             const monthlyData = {};
+            const indianMonthOrder = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
             
             allData.forEach(row => {
                 const month = row['Fiscal Month'];
@@ -801,19 +787,16 @@
                         ros_gndp: 0,
                         ros_mrp: 0,
                         counter_gndp: 0,
-                        counter_mrp: 0,
-                        count: 0
+                        counter_mrp: 0
                     };
                 }
                 monthlyData[month].ros_gndp += parseFloat(row['Acc Sale throughROs (GNDP)In Rs']) || 0;
                 monthlyData[month].ros_mrp += parseFloat(row['Acc Sale throughROs (MRP) In Rs']) || 0;
                 monthlyData[month].counter_gndp += parseFloat(row['Acc Sale throughCounter (GNDP) In Rs']) || 0;
                 monthlyData[month].counter_mrp += parseFloat(row['Acc Sale throughCounter (MRP) In Rs']) || 0;
-                monthlyData[month].count++;
             });
 
-            const monthOrder = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
-            const labels = monthOrder.filter(m => monthlyData[m]);
+            const labels = indianMonthOrder.filter(m => monthlyData[m]);
             
             let ros_values, counter_values, total_values, title;
             
@@ -821,20 +804,18 @@
                 ros_values = labels.map(m => monthlyData[m].ros_gndp);
                 counter_values = labels.map(m => monthlyData[m].counter_gndp);
                 total_values = labels.map((m, i) => ros_values[i] + counter_values[i]);
-                title = 'Month Wise Sales Trend (GNDP)';
+                title = 'Month Wise Sales Trend GNDP';
             } else {
                 ros_values = labels.map(m => monthlyData[m].ros_mrp);
                 counter_values = labels.map(m => monthlyData[m].counter_mrp);
                 total_values = labels.map((m, i) => ros_values[i] + counter_values[i]);
-                title = 'Month Wise Sales Trend (MRP)';
+                title = 'Month Wise Sales Trend MRP';
             }
 
             drawChart(labels, ros_values, counter_values, total_values, title, priceModel);
         }
 
-        // Create Quarter-wise Chart
         function createQuarterWiseChart(priceModel) {
-            // Group data by quarter
             const quarterlyData = {};
             
             allData.forEach(row => {
@@ -844,15 +825,13 @@
                         ros_gndp: 0,
                         ros_mrp: 0,
                         counter_gndp: 0,
-                        counter_mrp: 0,
-                        count: 0
+                        counter_mrp: 0
                     };
                 }
                 quarterlyData[quarter].ros_gndp += parseFloat(row['Acc Sale throughROs (GNDP)In Rs']) || 0;
                 quarterlyData[quarter].ros_mrp += parseFloat(row['Acc Sale throughROs (MRP) In Rs']) || 0;
                 quarterlyData[quarter].counter_gndp += parseFloat(row['Acc Sale throughCounter (GNDP) In Rs']) || 0;
                 quarterlyData[quarter].counter_mrp += parseFloat(row['Acc Sale throughCounter (MRP) In Rs']) || 0;
-                quarterlyData[quarter].count++;
             });
 
             const quarterOrder = ['Q1', 'Q2', 'Q3', 'Q4'];
@@ -864,18 +843,17 @@
                 ros_values = labels.map(q => quarterlyData[q].ros_gndp);
                 counter_values = labels.map(q => quarterlyData[q].counter_gndp);
                 total_values = labels.map((q, i) => ros_values[i] + counter_values[i]);
-                title = 'Quarter Wise Sales Trend (GNDP)';
+                title = 'Quarter Wise Sales Trend GNDP';
             } else {
                 ros_values = labels.map(q => quarterlyData[q].ros_mrp);
                 counter_values = labels.map(q => quarterlyData[q].counter_mrp);
                 total_values = labels.map((q, i) => ros_values[i] + counter_values[i]);
-                title = 'Quarter Wise Sales Trend (MRP)';
+                title = 'Quarter Wise Sales Trend MRP';
             }
 
             drawChart(labels, ros_values, counter_values, total_values, title, priceModel);
         }
 
-        // Draw Chart
         function drawChart(labels, ros_values, counter_values, total_values, title, priceModel) {
             const ctx = document.getElementById('salesChart').getContext('2d');
             
@@ -883,12 +861,10 @@
                 chartInstance.destroy();
             }
 
-            // Get checkbox states
             const showROs = document.getElementById('showROs').checked;
             const showCounter = document.getElementById('showCounter').checked;
             const showTotal = document.getElementById('showTotal').checked;
 
-            // Determine colors based on price model
             let ros_color, ros_bg, counter_color, counter_bg, total_color, total_bg;
             
             if (priceModel === 'gndp') {
@@ -907,12 +883,11 @@
                 total_bg = 'rgba(0, 212, 255, 0.1)';
             }
 
-            // Build datasets based on checkbox selection
             const datasets = [];
 
             if (showROs) {
                 datasets.push({
-                    label: priceModel === 'gndp' ? 'ROs Sale (GNDP)' : 'ROs Sale (MRP)',
+                    label: priceModel === 'gndp' ? 'ROs Sale GNDP' : 'ROs Sale MRP',
                     data: ros_values,
                     borderColor: ros_color,
                     backgroundColor: ros_bg,
@@ -929,7 +904,7 @@
 
             if (showCounter) {
                 datasets.push({
-                    label: priceModel === 'gndp' ? 'Counter Sale (GNDP)' : 'Counter Sale (MRP)',
+                    label: priceModel === 'gndp' ? 'Counter Sale GNDP' : 'Counter Sale MRP',
                     data: counter_values,
                     borderColor: counter_color,
                     backgroundColor: counter_bg,
@@ -946,7 +921,7 @@
 
             if (showTotal) {
                 datasets.push({
-                    label: 'Total Sales (' + priceModel.toUpperCase() + ')',
+                    label: 'Total Sales ' + priceModel.toUpperCase(),
                     data: total_values,
                     borderColor: total_color,
                     backgroundColor: total_bg,
@@ -994,7 +969,7 @@
                             beginAtZero: true,
                             ticks: {
                                 callback: function(value) {
-                                    return '₹ ' + formatNumber(value / 100000) + 'L';
+                                    return 'Rs ' + formatNumber(value / 100000) + 'L';
                                 },
                                 font: { size: 11 }
                             },
@@ -1020,7 +995,6 @@
             });
         }
 
-        // Utility functions
         function formatNumber(num, decimals = 0) {
             if (isNaN(num)) return '0';
             return parseFloat(num).toLocaleString('en-IN', {
@@ -1030,8 +1004,12 @@
         }
 
         function showLoading(show) {
-            document.getElementById('loading')[show ? 'classList' : 'classList'].add('show');
-            if (!show) document.getElementById('loading').classList.remove('show');
+            const loadingDiv = document.getElementById('loading');
+            if (show) {
+                loadingDiv.classList.add('show');
+            } else {
+                loadingDiv.classList.remove('show');
+            }
         }
 
         function showError(message) {
